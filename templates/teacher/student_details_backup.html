@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[60vh]">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Update Student: {{ student.name }}</h2>
+            <a href="{{ url_for('teacher.student_details', usn=student.usn) }}"
+                class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Cancel</a>
+        </div>
+
+        <form method="POST" action="{{ url_for('teacher.update_student', usn=student.usn) }}">
+            <!-- Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                    <input type="text" name="name" id="name" value="{{ student.name }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label for="email"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                    <input type="email" name="email" id="email" value="{{ student.email }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                </div>
+                <div>
+                    <label for="dob" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date of
+                        Birth</label>
+                    <input type="date" name="dob" id="dob" value="{{ student.dob }}"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        required>
+                </div>
+                <div>
+                    <label for="department"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Department</label>
+                    <select name="department" id="department"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <option value="CSE" {% if student.department=='CSE' %}selected{% endif %}>CSE</option>
+                        <option value="ECE" {% if student.department=='ECE' %}selected{% endif %}>ECE</option>
+                        <option value="ME" {% if student.department=='ME' %}selected{% endif %}>ME</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="my-6 border-gray-200 dark:border-gray-700">
+
+            <!-- Academic Info -->
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Academic Performance</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {% set subjects = ['ada', 'dbms', 'sepm', 'rmk', 'cc', 'esk', 'sdk'] %}
+                {% for sub in subjects %}
+                <div>
+                    <label for="{{ sub }}"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">{{ sub }}</label>
+                    <input type="number" name="{{ sub }}" id="{{ sub }}" value="{{ marks[sub] }}" min="0" max="100"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="attendance"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Attendance (%)</label>
+                    <input type="number" name="attendance" id="attendance" value="{{ attendance.percentage }}" min="0"
+                        max="100" step="0.1"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                </div>
+                <div>
+                    <label for="study_hours" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Study
+                        Hours (per week)</label>
+                    <input type="number" name="study_hours" id="study_hours" value="{{ study_hours.hours_per_week }}"
+                        min="0" step="0.1"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full text-white bg-primary hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update
+                Student</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6">
+    <a href="{{ url_for('teacher.dashboard') }}"
+        class="text-primary hover:underline flex items-center mb-4 transition-colors duration-200">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+            </path>
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-1">{{ student.name }}</h1>
+            <p class="text-gray-600 dark:text-gray-400 text-lg">USN: <span class="font-mono font-bold">{{ student.usn
+                    }}</span> | Dept: <span class="font-semibold">{{ student.department }}</span></p>
+        </div>
+        <a href="{{ url_for('teacher.update_student', usn=student.usn) }}"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 shadow-md hover:shadow-lg transition-all duration-200">
+            Edit Student
+        </a>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Overall Percentage -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 {{ 'border-green-500' if result_status == 'Pass' else 'border-red-500' }} transform hover:scale-105 transition duration-300">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider">Overall Score
+                </p>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ overall_percentage }}%</h2>
+            </div>
+            <div
+                class="p-3 rounded-full {{ 'bg-green-100 text-green-600' if result_status == 'Pass' else 'bg-red-100 text-red-600' }}">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+        <p class="mt-2 text-sm {{ 'text-green-600' if result_status == 'Pass' else 'text-red-600' }} font-bold">{{
+            result_status }}</p>
+    </div>
+
+    <!-- Total Marks -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-blue-500 transform hover:scale-105 transition duration-300">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider">Total Marks
+                </p>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ total_marks }} <span
+                        class="text-lg text-gray-400 font-normal">/ 700</span></h2>
+            </div>
+            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 {{ 'border-green-500' if attendance.percentage >= 75 else 'border-yellow-500' }} transform hover:scale-105 transition duration-300">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider">Attendance
+                </p>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ attendance.percentage }}%</h2>
+            </div>
+            <div
+                class="p-3 rounded-full {{ 'bg-green-100 text-green-600' if attendance.percentage >= 75 else 'bg-yellow-100 text-yellow-600' }}">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+        <p class="mt-2 text-sm text-gray-500 font-medium">Target: 75%</p>
+    </div>
+
+    <!-- Study Hours -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-purple-500 transform hover:scale-105 transition duration-300">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider">Study Hours
+                </p>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ study_hours.hours_per_week }}h</h2>
+            </div>
+            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                    </path>
+                </svg>
+            </div>
+        </div>
+        <p class="mt-2 text-sm text-gray-500 font-medium">Per Week</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <!-- Radar Chart -->
+    <div
+        class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg lg:col-span-1 border border-gray-100 dark:border-gray-700">
+        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Performance Radar</h3>
+        <div class="relative h-80">
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div
+        class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg lg:col-span-2 border border-gray-100 dark:border-gray-700">
+        <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Subject Comparison</h3>
+        <div class="relative h-80">
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Marks Table -->
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-100 dark:border-gray-700">
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detailed Subject Breakdown</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="py-4 px-6">Subject</th>
+                    <th scope="col" class="py-4 px-6">Marks Obtained</th>
+                    <th scope="col" class="py-4 px-6">Class Average</th>
+                    <th scope="col" class="py-4 px-6">Deviation</th>
+                    <th scope="col" class="py-4 px-6">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set subjects = ['ada', 'dbms', 'sepm', 'rmk', 'cc', 'esk', 'sdk'] %}
+                {% for sub in subjects %}
+                {% set diff = marks[sub] - averages[sub] %}
+                <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                    <td class="py-4 px-6 uppercase font-bold text-gray-900 dark:text-white">{{ sub }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub] }}</td>
+                    <td class="py-4 px-6">{{ averages[sub]|round(1) }}</td>
+                    <td class="py-4 px-6">
+                        <span class="font-bold {{ 'text-green-500' if diff > 0 else 'text-red-500' }}">
+                            {{ '+' if diff > 0 }}{{ diff|round(1) }}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6">
+                        {% if marks[sub] >= 35 %}
+                        <span
+                            class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full dark:bg-green-900 dark:text-green-300">Pass</span>
+                        {% else %}
+                        <span
+                            class="bg-red-100 text-red-800 text-xs font-bold px-3 py-1 rounded-full dark:bg-red-900 dark:text-red-300">Fail</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const labels=['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'];
+const myMarks=[{{marks.ada}},{{marks.dbms}},{{marks.sepm}},{{marks.rmk}},{{marks.cc}},{{marks.esk}},{{marks.sdk}}];
+const classAvg=[{{averages.ada}},{{averages.dbms}},{{averages.sepm}},{{averages.rmk}},{{averages.cc}},{{averages.esk}},{{averages.sdk}}];
+new Chart(document.getElementById('radarChart'),{type:'radar',data:{labels:labels,datasets:[{label:'Student Marks',data:myMarks,fill:true,backgroundColor:'rgba(59,130,246,0.2)',borderColor:'rgb(59,130,246)',pointBackgroundColor:'rgb(59,130,246)',pointBorderColor:'#fff',pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'rgb(59,130,246)',pointRadius:4,pointHoverRadius:6},{label:'Class Avg',data:classAvg,fill:true,backgroundColor:'rgba(168,85,247,0.2)',borderColor:'rgb(168,85,247)',pointBackgroundColor:'rgb(168,85,247)',pointBorderColor:'#fff',pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'rgb(168,85,247)',pointRadius:4,pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,elements:{line:{borderWidth:3}},scales:{r:{angleLines:{display:true,color:'rgba(156,163,175,0.2)'},grid:{color:'rgba(156,163,175,0.2)'},pointLabels:{font:{size:12,weight:'bold'},color:'rgba(107,114,128,1)'},suggestedMin:0,suggestedMax:100,ticks:{stepSize:20,backdropColor:'transparent'}}},plugins:{legend:{position:'bottom'}}}});
+new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:labels,datasets:[{label:'Student Marks',data:myMarks,backgroundColor:'rgba(59,130,246,0.8)',borderColor:'rgb(59,130,246)',borderWidth:1,borderRadius:6,barPercentage:0.6,categoryPercentage:0.8},{label:'Class Average',data:classAvg,backgroundColor:'rgba(168,85,247,0.8)',borderColor:'rgb(168,85,247)',borderWidth:1,borderRadius:6,barPercentage:0.6,categoryPercentage:0.8}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100,grid:{color:'rgba(156,163,175,0.1)'},title:{display:true,text:'Marks'}},x:{grid:{display:false}}},plugins:{legend:{position:'top'},tooltip:{mode:'index',intersect:false,backgroundColor:'rgba(0,0,0,0.8)',titleFont:{size:13},bodyFont:{size:13},padding:10,cornerRadius:4,displayColors:true}}}});
+</script>
+{% endblock %}
