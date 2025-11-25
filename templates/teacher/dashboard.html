@@ -192,6 +192,27 @@
             </div>
         </div>
         {% endif %}
+
+        <!-- Performance Graphs -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <!-- Radar Chart -->
+            <div
+                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg lg:col-span-1 border border-gray-100 dark:border-gray-700">
+                <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Class Performance Radar</h3>
+                <div class="relative h-80">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bar Chart -->
+            <div
+                class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg lg:col-span-2 border border-gray-100 dark:border-gray-700">
+                <h3 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Internal Marks Comparison</h3>
+                <div class="relative h-80">
+                    <canvas id="subjectChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -448,5 +469,139 @@
                 console.error(err);
             });
     }
+
+    // Performance Graphs
+    const labels = ['ADA', 'DBMS', 'SEPM', 'RMK', 'CC', 'ESK', 'SDK'];
+    const internalAvgData = {{ internal_avg_data | tojson }};
+    const int1AvgData = {{ int1_avg_data | tojson }};
+    const int2AvgData = {{ int2_avg_data | tojson }};
+
+    // Radar Chart - Average Internal Marks
+    new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Class Average (Internal)',
+                data: internalAvgData,
+                fill: true,
+                backgroundColor: 'rgba(59,130,246,0.2)',
+                borderColor: 'rgb(59,130,246)',
+                pointBackgroundColor: 'rgb(59,130,246)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(59,130,246)',
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            elements: {
+                line: {
+                    borderWidth: 3
+                }
+            },
+            scales: {
+                r: {
+                    angleLines: {
+                        display: true,
+                        color: 'rgba(156,163,175,0.2)'
+                    },
+                    grid: {
+                        color: 'rgba(156,163,175,0.2)'
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        color: 'rgba(107,114,128,1)'
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 100,
+                    ticks: {
+                        stepSize: 20,
+                        backdropColor: 'transparent'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Bar Chart - Internal 1 vs Internal 2 Comparison
+    new Chart(document.getElementById('subjectChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Internal 1',
+                data: int1AvgData,
+                backgroundColor: 'rgba(59,130,246,0.8)',
+                borderColor: 'rgb(59,130,246)',
+                borderWidth: 1,
+                borderRadius: 6,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            }, {
+                label: 'Internal 2',
+                data: int2AvgData,
+                backgroundColor: 'rgba(168,85,247,0.8)',
+                borderColor: 'rgb(168,85,247)',
+                borderWidth: 1,
+                borderRadius: 6,
+                barPercentage: 0.6,
+                categoryPercentage: 0.8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(156,163,175,0.1)'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Marks'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: {
+                        size: 13
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    padding: 10,
+                    cornerRadius: 4,
+                    displayColors: true
+                }
+            }
+        }
+    });
+
 </script>
 {% endblock %}

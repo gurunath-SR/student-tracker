@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="mb-6">
@@ -139,7 +139,9 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="py-4 px-6">Subject</th>
-                    <th scope="col" class="py-4 px-6">Marks Obtained</th>
+                    <th scope="col" class="py-4 px-6">Int 1</th>
+                    <th scope="col" class="py-4 px-6">Int 2</th>
+                    <th scope="col" class="py-4 px-6">Sem End</th>
                     <th scope="col" class="py-4 px-6">Class Average</th>
                     <th scope="col" class="py-4 px-6">Deviation</th>
                     <th scope="col" class="py-4 px-6">Status</th>
@@ -152,7 +154,9 @@
                 <tr
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                     <td class="py-4 px-6 uppercase font-bold text-gray-900 dark:text-white">{{ sub }}</td>
-                    <td class="py-4 px-6 font-medium">{{ marks[sub] }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub + '_int1'] or 0 }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub + '_int2'] or 0 }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub + '_sem'] or marks[sub] }}</td>
                     <td class="py-4 px-6">{{ averages[sub]|round(1) }}</td>
                     <td class="py-4 px-6">
                         <span class="font-bold {{ 'text-green-500' if diff > 0 else 'text-red-500' }}">
@@ -176,10 +180,114 @@
 </div>
 
 <script>
-const labels=['ADA','DBMS','SEPM','RMK','CC','ESK','SDK'];
-const myMarks=[{{marks.ada}},{{marks.dbms}},{{marks.sepm}},{{marks.rmk}},{{marks.cc}},{{marks.esk}},{{marks.sdk}}];
-const classAvg=[{{averages.ada}},{{averages.dbms}},{{averages.sepm}},{{averages.rmk}},{{averages.cc}},{{averages.esk}},{{averages.sdk}}];
-new Chart(document.getElementById('radarChart'),{type:'radar',data:{labels:labels,datasets:[{label:'Student Marks',data:myMarks,fill:true,backgroundColor:'rgba(59,130,246,0.2)',borderColor:'rgb(59,130,246)',pointBackgroundColor:'rgb(59,130,246)',pointBorderColor:'#fff',pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'rgb(59,130,246)',pointRadius:4,pointHoverRadius:6},{label:'Class Avg',data:classAvg,fill:true,backgroundColor:'rgba(168,85,247,0.2)',borderColor:'rgb(168,85,247)',pointBackgroundColor:'rgb(168,85,247)',pointBorderColor:'#fff',pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'rgb(168,85,247)',pointRadius:4,pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,elements:{line:{borderWidth:3}},scales:{r:{angleLines:{display:true,color:'rgba(156,163,175,0.2)'},grid:{color:'rgba(156,163,175,0.2)'},pointLabels:{font:{size:12,weight:'bold'},color:'rgba(107,114,128,1)'},suggestedMin:0,suggestedMax:100,ticks:{stepSize:20,backdropColor:'transparent'}}},plugins:{legend:{position:'bottom'}}}});
-new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:labels,datasets:[{label:'Student Marks',data:myMarks,backgroundColor:'rgba(59,130,246,0.8)',borderColor:'rgb(59,130,246)',borderWidth:1,borderRadius:6,barPercentage:0.6,categoryPercentage:0.8},{label:'Class Average',data:classAvg,backgroundColor:'rgba(168,85,247,0.8)',borderColor:'rgb(168,85,247)',borderWidth:1,borderRadius:6,barPercentage:0.6,categoryPercentage:0.8}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100,grid:{color:'rgba(156,163,175,0.1)'},title:{display:true,text:'Marks'}},x:{grid:{display:false}}},plugins:{legend:{position:'top'},tooltip:{mode:'index',intersect:false,backgroundColor:'rgba(0,0,0,0.8)',titleFont:{size:13},bodyFont:{size:13},padding:10,cornerRadius:4,displayColors:true}}}});
+    const labels = ['ADA', 'DBMS', 'SEPM', 'RMK', 'CC', 'ESK', 'SDK'];
+
+    // Internal 1 Marks
+    const int1Marks = [
+        {{ marks.ada_int1 or 0 }}, {{ marks.dbms_int1 or 0 }}, {{ marks.sepm_int1 or 0 }},
+    {{ marks.rmk_int1 or 0 }}, {{ marks.cc_int1 or 0 }}, {{ marks.esk_int1 or 0 }}, {{ marks.sdk_int1 or 0 }}
+    ];
+
+    // Internal 2 Marks
+    const int2Marks = [
+        {{ marks.ada_int2 or 0 }}, {{ marks.dbms_int2 or 0 }}, {{ marks.sepm_int2 or 0 }},
+    {{ marks.rmk_int2 or 0 }}, {{ marks.cc_int2 or 0 }}, {{ marks.esk_int2 or 0 }}, {{ marks.sdk_int2 or 0 }}
+    ];
+
+    // Total Internal Marks (Int 1 + Int 2)
+    const totalIntMarks = int1Marks.map((val, index) => val + int2Marks[index]);
+
+    // Radar Chart - Total Internals
+    new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Internals',
+                data: totalIntMarks,
+                fill: true,
+                backgroundColor: 'rgba(59,130,246,0.2)',
+                borderColor: 'rgb(59,130,246)',
+                pointBackgroundColor: 'rgb(59,130,246)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(59,130,246)',
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            elements: { line: { borderWidth: 3 }},
+            scales: {
+                r: {
+                    angleLines: { display: true, color: 'rgba(156,163,175,0.2)' },
+                    grid: { color: 'rgba(156,163,175,0.2)' },
+                    pointLabels: { font: { size: 12, weight: 'bold' }, color: 'rgba(107,114,128,1)' },
+                    suggestedMin: 0,
+                    suggestedMax: 100,
+                    ticks: { stepSize: 20, backdropColor: 'transparent' }
+                }
+            },
+            plugins: { legend: { position: 'bottom' }}
+        }
+    });
+
+    // Bar Chart - Internal 1 vs Internal 2
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Internal 1',
+                    data: int1Marks,
+                    backgroundColor: 'rgba(59,130,246,0.8)',
+                    borderColor: 'rgb(59,130,246)',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.4
+                },
+                {
+                    label: 'Internal 2',
+                    data: int2Marks,
+                    backgroundColor: 'rgba(168,85,247,0.8)',
+                    borderColor: 'rgb(168,85,247)',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(156,163,175,0.1)' },
+                    title: { display: true, text: 'Marks' }
+                },
+                x: { grid: { display: false }}
+            },
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: { size: 13 },
+                    bodyFont: { size: 13 },
+                    padding: 10,
+                    cornerRadius: 4,
+                    displayColors: true
+                }
+            }
+        }
+    });
 </script>
 {% endblock %}

@@ -4,7 +4,8 @@
 <div class="flex items-center justify-center min-h-[60vh]">
     <div class="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Update Student: {{ student.name }}</h2>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Update Student: {{
+                student.name }}</h2>
             <a href="{{ url_for('teacher.student_details', usn=student.usn) }}"
                 class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Cancel</a>
         </div>
@@ -25,7 +26,8 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                 </div>
                 <div>
-                    <label for="dob" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date of
+                    <label for="dob" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
+                        of
                         Birth</label>
                     <input type="date" name="dob" id="dob" value="{{ student.dob }}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
@@ -38,7 +40,8 @@
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                         <option value="CSE" {% if student.department=='CSE' %}selected{% endif %}>CSE</option>
                         <option value="ECE" {% if student.department=='ECE' %}selected{% endif %}>ECE</option>
-                        <option value="ME" {% if student.department=='ME' %}selected{% endif %}>ME</option>
+                        <option value="ME" {% if student.department=='ME' %}selected{% endif %}>
+                            ME</option>
                     </select>
                 </div>
             </div>
@@ -46,13 +49,29 @@
             <hr class="my-6 border-gray-200 dark:border-gray-700">
 
             <!-- Academic Info -->
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Academic Performance</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Academic
+                    Performance</h3>
+                <div class="flex items-center">
+                    <label for="exam_type" class="mr-2 text-sm font-medium text-gray-900 dark:text-white">Exam
+                        Type:</label>
+                    <select id="exam_type_select" onchange="updateMarksInputs()"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                        <option value="int1">Internal 1</option>
+                        <option value="int2">Internal 2</option>
+                        <option value="sem" selected>Semester End</option>
+                    </select>
+                    <input type="hidden" name="exam_type" id="exam_type_input" value="sem">
+                </div>
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {% set subjects = ['ada', 'dbms', 'sepm', 'rmk', 'cc', 'esk', 'sdk'] %}
                 {% for sub in subjects %}
                 <div>
                     <label for="{{ sub }}"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">{{ sub }}</label>
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">{{
+                        sub }}</label>
                     <input type="number" name="{{ sub }}" id="{{ sub }}" value="{{ marks[sub] }}" min="0" max="100"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                 </div>
@@ -60,12 +79,14 @@
             </div>
 
             <!-- Subject-wise Attendance -->
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Subject-wise Attendance (%)</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Subject-wise
+                Attendance (%)</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {% for sub in subjects %}
                 <div>
                     <label for="att_{{ sub }}"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">{{ sub }}</label>
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">{{
+                        sub }}</label>
                     <input type="number" name="att_{{ sub }}" id="att_{{ sub }}" value="{{ attendance[sub] }}" min="0"
                         max="100" step="0.1"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -96,4 +117,32 @@
         </form>
     </div>
 </div>
+
+<script>
+    const allMarks = {{ marks | tojson }};
+    const subjects = ['ada', 'dbms', 'sepm', 'rmk', 'cc', 'esk', 'sdk'];
+
+    function updateMarksInputs() {
+        const examType = document.getElementById('exam_type_select').value;
+        document.getElementById('exam_type_input').value = examType;
+
+        subjects.forEach(sub => {
+            let key = sub;
+            if (examType === 'int1') key = sub + '_int1';
+            else if (examType === 'int2') key = sub + '_int2';
+            else key = sub + '_sem'; // or just sub for legacy compatibility, but let's use explicit if available
+
+            // Fallback to legacy columns if _sem is 0 (migration case)
+            if (examType === 'sem' && (!allMarks[key] && allMarks[sub])) {
+                key = sub;
+            }
+
+            const val = allMarks[key] !== undefined ? allMarks[key] : 0;
+            document.getElementById(sub).value = val;
+        });
+    }
+
+    // Initialize
+    updateMarksInputs();
+</script>
 {% endblock %}

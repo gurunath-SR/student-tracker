@@ -174,7 +174,9 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="py-4 px-6">Subject</th>
-                    <th scope="col" class="py-4 px-6">Marks Obtained</th>
+                    <th scope="col" class="py-4 px-6">Int 1</th>
+                    <th scope="col" class="py-4 px-6">Int 2</th>
+                    <th scope="col" class="py-4 px-6">Sem End</th>
                     <th scope="col" class="py-4 px-6">Attendance %</th>
                     <th scope="col" class="py-4 px-6">Deviation</th>
                     <th scope="col" class="py-4 px-6">Status</th>
@@ -187,7 +189,9 @@
                 <tr
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                     <td class="py-4 px-6 uppercase font-bold text-gray-900 dark:text-white">{{ sub }}</td>
-                    <td class="py-4 px-6 font-medium">{{ marks[sub] }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub + '_int1'] or 0 }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub + '_int2'] or 0 }}</td>
+                    <td class="py-4 px-6 font-medium">{{ marks[sub + '_sem'] or marks[sub] }}</td>
                     <td
                         class="py-4 px-6 font-medium {{ 'text-green-500' if attendance[sub] >= 75 else 'text-red-500' }}">
                         {{ attendance[sub] }}%</td>
