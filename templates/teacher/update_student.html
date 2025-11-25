@@ -59,10 +59,24 @@
                 {% endfor %}
             </div>
 
+            <!-- Subject-wise Attendance -->
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Subject-wise Attendance (%)</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {% for sub in subjects %}
+                <div>
+                    <label for="att_{{ sub }}"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white uppercase">{{ sub }}</label>
+                    <input type="number" name="att_{{ sub }}" id="att_{{ sub }}" value="{{ attendance[sub] }}" min="0"
+                        max="100" step="0.1"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                </div>
+                {% endfor %}
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <label for="attendance"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Attendance (%)</label>
+                    <label for="attendance" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Overall
+                        Attendance (%)</label>
                     <input type="number" name="attendance" id="attendance" value="{{ attendance.percentage }}" min="0"
                         max="100" step="0.1"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">

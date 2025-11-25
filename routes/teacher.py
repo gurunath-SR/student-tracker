@@ -47,7 +47,7 @@ def add_student():
             
             # Initialize empty marks/attendance for the student
             cursor.execute('INSERT INTO marks (student_usn, ada, dbms, sepm, rmk, cc, esk, sdk) VALUES (%s, 0, 0, 0, 0, 0, 0, 0)', (usn,))
-            cursor.execute('INSERT INTO attendance (student_usn, percentage) VALUES (%s, 0)', (usn,))
+            cursor.execute('INSERT INTO attendance (student_usn, percentage, ada, dbms, sepm, rmk, cc, esk, sdk) VALUES (%s, 0, 0, 0, 0, 0, 0, 0, 0)', (usn,))
             cursor.execute('INSERT INTO study_hours (student_usn, hours_per_week) VALUES (%s, 0)', (usn,))
             mysql.connection.commit()
             
@@ -123,10 +123,20 @@ def update_student(usn):
                        (ada, dbms, sepm, rmk, cc, esk, sdk, usn))
                        
         # Update Attendance & Study Hours
-        attendance = request.form['attendance']
+        attendance_percentage = request.form['attendance']
         study_hours = request.form['study_hours']
         
-        cursor.execute('UPDATE attendance SET percentage=%s WHERE student_usn=%s', (attendance, usn))
+        # Subject-wise attendance
+        att_ada = request.form.get('att_ada', 0)
+        att_dbms = request.form.get('att_dbms', 0)
+        att_sepm = request.form.get('att_sepm', 0)
+        att_rmk = request.form.get('att_rmk', 0)
+        att_cc = request.form.get('att_cc', 0)
+        att_esk = request.form.get('att_esk', 0)
+        att_sdk = request.form.get('att_sdk', 0)
+        
+        cursor.execute('UPDATE attendance SET percentage=%s, ada=%s, dbms=%s, sepm=%s, rmk=%s, cc=%s, esk=%s, sdk=%s WHERE student_usn=%s', 
+                       (attendance_percentage, att_ada, att_dbms, att_sepm, att_rmk, att_cc, att_esk, att_sdk, usn))
         cursor.execute('UPDATE study_hours SET hours_per_week=%s WHERE student_usn=%s', (study_hours, usn))
         
         mysql.connection.commit()
